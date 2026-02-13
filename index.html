@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nosso Filme 💖</title>
+
+<style>
+:root{
+--rosa:#ff4d88;
+--rosa2:#ff99cc;
+--dourado:#ffd700;
+--bg1:#140a1c;
+--bg2:#060309;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+background:radial-gradient(circle at top,var(--bg1),var(--bg2) 70%);
+color:white;
+font-family:'Segoe UI',sans-serif;
+overflow:hidden;
+min-height:100vh;
+text-align:center;
+}
+
+/* PARTÍCULAS */
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:-1;
+}
+
+/* TELAS */
+.tela{
+display:none;
+min-height:100vh;
+padding:30px 20px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+transition:opacity 1s;
+}
+
+.ativa{
+display:flex;
+animation:fadeIn 1.2s ease forwards;
+}
+
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(20px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* TÍTULO */
+.titulo{
+font-family:cursive;
+font-size:1.7rem;
+color:var(--rosa2);
+text-shadow:0 0 20px rgba(255,105,180,.8);
+animation:flutuar 4s infinite ease-in-out;
+margin-bottom:20px;
+}
+
+@keyframes flutuar{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-8px);}
+}
+
+/* BOTÕES */
+.btn{
+margin:12px;
+padding:14px 22px;
+border-radius:30px;
+border:1px solid var(--dourado);
+background:rgba(255,105,180,.15);
+backdrop-filter:blur(10px);
+color:white;
+font-size:1rem;
+cursor:pointer;
+transition:.4s;
+box-shadow:0 0 15px rgba(255,215,0,.4);
+}
+
+.btn:hover{
+transform:scale(1.08);
+box-shadow:0 0 40px rgba(255,215,0,.8);
+}
+
+/* CORAÇÃO */
+.heart{
+font-size:5rem;
+animation:beat 1.5s infinite;
+}
+
+@keyframes beat{
+0%,100%{transform:scale(1);}
+50%{transform:scale(1.2);}
+}
+
+/* TEXTO */
+.texto{
+max-width:90%;
+font-size:1.2rem;
+min-height:60px;
+margin-top:20px;
+}
+
+/* ASSINATURA */
+.assinatura{
+position:fixed;
+bottom:0;
+width:100%;
+font-size:.8rem;
+opacity:.8;
+padding:6px;
+color:var(--rosa2);
+text-shadow:0 0 8px rgba(255,105,180,.7);
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<!-- TELA 1 -->
+<div id="home" class="tela ativa">
+<div class="titulo">💖✨ Você quer ser meu Valentine? ✨💖</div>
+
+<button class="btn" onclick="irPara('cartas')">💕 Sim, mil vezes sim!</button>
+<button class="btn" onclick="irPara('cartas')">🌹 Claro que sim!</button>
+<button class="btn" onclick="irPara('cartas')">💞 Para sempre!</button>
+</div>
+
+<!-- CARTAS -->
+<div id="cartas" class="tela">
+<div class="titulo">💌 Escolha uma carta 💌</div>
+
+<button class="btn" onclick="irPara('pedido')">💍 Carta do Pedido</button>
+<button class="btn" onclick="irPara('filme')">🎬 Nosso Filme</button>
+<button class="btn" onclick="irPara('coração')">💖 Meu Coração</button>
+
+<br>
+<button class="btn" onclick="irPara('home')">Voltar</button>
+</div>
+
+<!-- PEDIDO -->
+<div id="pedido" class="tela">
+<div class="titulo">💍 Eu escolheria você todos os dias 💍</div>
+<div style="font-size:4rem;">💍 💍</div>
+<div class="texto" id="textoPedido"></div>
+<br>
+<button class="btn" onclick="irPara('cartas')">Voltar 💌</button>
+</div>
+
+<!-- FILME -->
+<div id="filme" class="tela">
+<div class="titulo">🎬 Nosso amor é meu filme favorito 🎬</div>
+<div style="font-size:3rem;">🤖 💖 🤖</div>
+<div class="texto" id="textoFilme"></div>
+<br>
+<button class="btn" onclick="irPara('cartas')">Voltar 💌</button>
+</div>
+
+<!-- CORAÇÃO -->
+<div id="coração" class="tela">
+<div class="heart">💔</div>
+<div class="texto" id="textoCoracao"></div>
+<br>
+<button class="btn" onclick="irPara('cartas')">Voltar 💌</button>
+</div>
+
+<div class="assinatura">
+💍❤️ Assinado pelo seu futuro esposo: David ❤️💍
+</div>
+
+<audio id="bgmusic" loop>
+<source src="musicas/enchanted.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+/* PARTÍCULAS */
+const canvas=document.getElementById("bg");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+let particles=[];
+for(let i=0;i<100;i++){
+particles.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+r:Math.random()*2+1,
+d:Math.random()*0.4
+});
+}
+
+function draw(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle="rgba(255,182,193,.6)";
+particles.forEach(p=>{
+ctx.beginPath();
+ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+ctx.fill();
+p.y+=p.d;
+if(p.y>canvas.height)p.y=0;
+});
+requestAnimationFrame(draw);
+}
+draw();
+
+/* TROCAR TELAS */
+function irPara(id){
+document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
+document.getElementById(id).classList.add('ativa');
+
+if(id==="pedido"){
+typeWriter("textoPedido",
+"Prometo caminhar ao seu lado nos dias bons e nos difíceis. Prometo amar você com calma, intensidade e verdade. 💖✨");
+}
+
+if(id==="filme"){
+typeWriter("textoFilme",
+"Mesmo em um universo inteiro de possibilidades, eu escolheria você. Porque quando nossos olhares se encontram, tudo faz sentido. 💞✨");
+}
+
+if(id==="coração"){
+setTimeout(()=>{document.querySelector(".heart").textContent="💖";},1500);
+typeWriter("textoCoracao",
+"Nosso amor pode até passar por tempestades… mas sempre encontra o caminho de volta. Porque ele é real. Porque é nosso. 💓✨");
+}
+}
+
+/* TEXTO LETRA POR LETRA */
+function typeWriter(id,text){
+let el=document.getElementById(id);
+el.innerHTML="";
+let i=0;
+let interval=setInterval(()=>{
+el.innerHTML+=text[i];
+i++;
+if(i>=text.length)clearInterval(interval);
+},40);
+}
+
+/* MÚSICA */
+const music=document.getElementById("bgmusic");
+music.volume=0.2;
+
+document.body.addEventListener("click",()=>{
+if(music.paused){
+music.volume=0;
+music.play();
+let v=0;
+let fade=setInterval(()=>{
+if(v<0.2){v+=0.01;music.volume=v;}
+else clearInterval(fade);
+},150);
+}
+},{once:true});
+
+</script>
+
+</body>
+</html>
